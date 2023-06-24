@@ -14,7 +14,8 @@ $(function () {
 			}
 			console.log(finalData)
 
-			playPreviousTrackButton = $("#play-previous"), playNextTrackButton = $("#play-next"), currIndex = -1;
+			playRepeat = $("#play-repeat"), playPreviousTrackButton = $("#play-previous"), playNextTrackButton = $("#play-next"), currIndex = -1;
+			
 			function playPause() {
 				setTimeout(function () {
 					if (audio.paused) {
@@ -204,23 +205,31 @@ $(function () {
 
 			function initPlayer() {
 				audio = new Audio();
+				audio.loop = false
 
 				selectTrack(0);
 
-				audio.loop = false;
-
 				playPauseButton.on("click", playPause);
-
+				playRepeat.on("click", function() {
+					if(audio.loop == true) {
+						$('#play-repeat i').attr('class', 'fas fa-circle');
+						audio.loop = false
+						return
+					}
+					audio.loop = true
+					$('#play-repeat i').attr('class', 'fas fa-arrow-alt-circle-up');
+				})
 				sArea.mousemove(function (event) { showHover(event); });
-
 				sArea.mouseout(hideHover);
-
 				sArea.on("click", playFromClickedPos);
-
 				$(audio).on("timeupdate", updateCurrTime);
 
-				playPreviousTrackButton.on("click", function () { selectTrack(-1); });
-				playNextTrackButton.on("click", function () { selectTrack(1); });
+
+				playPreviousTrackButton.on("click", function() { selectTrack(-1); });
+				playNextTrackButton.on("click", function() { selectTrack(1); });
+				audio.addEventListener("ended", function() {
+					selectTrack(1) 
+				});
 			}
 
 			initPlayer();
